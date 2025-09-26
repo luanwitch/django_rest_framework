@@ -1,13 +1,16 @@
 from pathlib import Path
+from decouple import config # type: ignore # Importando decouple
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-8bc##a)xkty$*7392eq-3tn%)ezwkn=gq!h#f#$f4j@kol%^tj'
+# Carregando SECRET_KEY de uma variável de ambiente (ou usando um fallback)
+# A função config() tenta ler a variável SECRET_KEY do ambiente
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-8bc##a)xkty$*7392eq-3tn%)ezwkn=gq!h#f#$f4j@kol%^tj')
 
-DEBUG = True
+# Carregando DEBUG de uma variável de ambiente (ou usando False por padrão)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*'] # Alterado para aceitar requisições de dentro do container
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,11 +52,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
+# Configuração do Banco de Dados usando variáveis de ambiente do Docker Compose (via decouple)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST', default='db'),
+        'PORT': config('POSTGRES_PORT', default='5432'),
     }
 }
 
