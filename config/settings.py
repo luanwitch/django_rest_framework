@@ -61,8 +61,8 @@ MIDDLEWARE = [
 # ---------------------------
 # URLS e WSGI
 # ---------------------------
-ROOT_URLCONF = "bookstore.urls"
-WSGI_APPLICATION = "bookstore.wsgi.application"
+ROOT_URLCONF = "config.urls"  
+WSGI_APPLICATION = "config.wsgi.application"  
 
 # ---------------------------
 # DATABASE (PostgreSQL / fallback SQLite)
