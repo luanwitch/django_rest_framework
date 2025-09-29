@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     #"django_extensions",
-    "order",
     "product",
     "rest_framework",
     "debug_toolbar",
