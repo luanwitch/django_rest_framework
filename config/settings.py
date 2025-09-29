@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 import dj_database_url
+from django.conf import settings
+
 
 # ---------------------------
 # BASE DIRECTORY
@@ -23,7 +25,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 # ---------------------------
 ALLOWED_HOSTS = config(
     "DJANGO_ALLOWED_HOSTS",
-    default="localhost 127.0.0.1 restframework-api.herokuapp.com",
+    default="127.0.0.1,localhost",
     cast=Csv()
 )
 
@@ -38,10 +40,33 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     #"django_extensions",
-    "rest_framework",
     "debug_toolbar",
     "rest_framework.authtoken",
+
+    # apps do seu projeto
+    'rest_framework',
+    "api",
 ]
+
+# ---------------------------
+# TEMPLATES
+# ---------------------------
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],  # opcional, se não tiver templates, pode deixar vazio: []
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
 
 # ---------------------------
 # MIDDLEWARE
@@ -80,7 +105,6 @@ DATABASES = {
         ssl_require=True
     )
 }
-
 
 # ---------------------------
 # PASSWORD VALIDATION
