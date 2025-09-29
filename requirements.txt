@@ -8,5 +8,5 @@ gunicorn==23.0.0
 python-decouple==3.8
 dj-database-url==1.1.0
 sqlparse==0.5.3
-django-extensions==4.12.0
+#django-extensions==4.12.0
 whitenoise==6.5.0
