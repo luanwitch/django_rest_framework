@@ -95,16 +95,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Heroku fornece a DATABASE_URL automaticamente quando você adiciona o add-on Heroku Postgres.
 # dj_database_url.config() interpreta essa URL e transforma em dicionário de configuração do Django.
 # conn_max_age ajuda na persistência de conexões; ssl_require=True força SSL no Heroku.
+DATABASE_URL = config(
+    "DATABASE_URL",
+    default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+)
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=config(
-            "DATABASE_URL",
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",  # fallback local
-        ),
+        default=DATABASE_URL,
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=DATABASE_URL.startswith("postgres://") or DATABASE_URL.startswith("postgresql://"),
     )
 }
+
 
 # ---------------------------
 # PASSWORD VALIDATION
