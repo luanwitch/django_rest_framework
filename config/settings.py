@@ -1,22 +1,27 @@
 import os
 from pathlib import Path
-from decouple import config # Importando decouple
-# -------------------- NOVO IMPORT --------------------
-import dj_database_url # Para configurar o banco de dados do Heroku
-# -----------------------------------------------------
+from decouple import config
+import dj_database_url
 
+# --------------------
+# BASE DIR
+# --------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Carregando SECRET_KEY de uma variável de ambiente (ou usando um fallback)
-# A função config() tenta ler a variável SECRET_KEY do ambiente
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-8bc##a)xkty$*7392eq-3tn%)ezwkn=gq!h#f#$f4j@kol%^tj')
 
-# Carregando DEBUG de uma variável de ambiente (ou usando False por padrão)
-# É CRUCIAL que o Heroku configure esta variável como False em produção
-DEBUG = config('DEBUG', default=False, cast=bool) # Alterado default para False
+# --------------------
+# SECURITY
+# --------------------
+SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 
-ALLOWED_HOSTS = ['*'] # Permite o acesso do domínio do Heroku
+DEBUG = config('DEBUG', default=False, cast=bool)
 
+ALLOWED_HOSTS = ['*']  # Heroku aceita wildcard
+
+
+# --------------------
+# APPS
+# --------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,15 +29,44 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # third-party
     'rest_framework',
+
+    # local apps
     'api',
-    # Adicione aqui outras apps como djangorestframework-simplejwt, etc. se estiverem faltando
 ]
 
+
+# --------------------
+# TEMPLATES (obrigatório para ADMIN)
+# --------------------
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+
+# --------------------
+# MIDDLEWARE
+# --------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WHITENOISE: Adicionado corretamente para servir arquivos estáticos
+
+    # Whitenoise antes de SessionMiddleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,49 +75,56 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'config.urls'
-
-# ... (TEMPLATES e WSGI_APPLICATION permanecem os mesmos) ...
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# -------------------- CORREÇÃO DO BANCO DE DADOS PARA HEROKU --------------------
-# O Heroku usa a variável DATABASE_URL. dj_database_url a converte para o Django.
+
+# --------------------
+# DATABASE (Heroku)
+# --------------------
 DATABASES = {
     'default': dj_database_url.config(
-        # Lendo DATABASE_URL do ambiente
-        default=config('DATABASE_URL') 
+        default=config('DATABASE_URL')
     )
 }
-# --------------------------------------------------------------------------------
 
 
-AUTH_PASSWORD_VALIDATORS = [
-# ... (VALIDATORS permanecem os mesmos) ...
-]
+# --------------------
+# PASSWORDS
+# --------------------
+AUTH_PASSWORD_VALIDATORS = []
 
 
+# --------------------
+# LOCALE / TIME
+# --------------------
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# -------------------- CONFIGURAÇÃO STATIC FILES CORRIGIDA --------------------
-STATIC_URL = 'static/'
 
-# Diretório para coletar arquivos estáticos
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+# --------------------
+# STATIC FILES (Heroku + Whitenoise)
+# --------------------
+STATIC_URL = '/static/'
 
-# Whitenoise: Otimiza o serviço de arquivos estáticos em produção
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# -----------------------------------------------------------------------------
 
+
+# --------------------
+# DEFAULT AUTO FIELD
+# --------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# --------------------
+# DRF
+# --------------------
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
 }
