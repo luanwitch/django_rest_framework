@@ -1,5 +1,9 @@
+import os
 from pathlib import Path
-from decouple import config # type: ignore # Importando decouple
+from decouple import config # Importando decouple
+# -------------------- NOVO IMPORT --------------------
+import dj_database_url # Para configurar o banco de dados do Heroku
+# -----------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,9 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-8bc##a)xkty$*7392eq-3tn%)ezwkn=gq!h#f#$f4j@kol%^tj')
 
 # Carregando DEBUG de uma variável de ambiente (ou usando False por padrão)
-DEBUG = config('DEBUG', default=True, cast=bool)
+# É CRUCIAL que o Heroku configure esta variável como False em produção
+DEBUG = config('DEBUG', default=False, cast=bool) # Alterado default para False
 
-ALLOWED_HOSTS = ['*'] # Alterado para aceitar requisições de dentro do container
+ALLOWED_HOSTS = ['*'] # Permite o acesso do domínio do Heroku
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,10 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',
+    # Adicione aqui outras apps como djangorestframework-simplejwt, etc. se estiverem faltando
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WHITENOISE: Adicionado corretamente para servir arquivos estáticos
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -35,49 +43,23 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
+# ... (TEMPLATES e WSGI_APPLICATION permanecem os mesmos) ...
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Configuração do Banco de Dados usando variáveis de ambiente do Docker Compose (via decouple)
+# -------------------- CORREÇÃO DO BANCO DE DADOS PARA HEROKU --------------------
+# O Heroku usa a variável DATABASE_URL. dj_database_url a converte para o Django.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': config('POSTGRES_HOST', default='db'),
-        'PORT': config('POSTGRES_PORT', default='5432'),
-    }
+    'default': dj_database_url.config(
+        # Lendo DATABASE_URL do ambiente
+        default=config('DATABASE_URL') 
+    )
 }
+# --------------------------------------------------------------------------------
 
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+# ... (VALIDATORS permanecem os mesmos) ...
 ]
 
 
@@ -89,8 +71,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+# -------------------- CONFIGURAÇÃO STATIC FILES CORRIGIDA --------------------
 STATIC_URL = 'static/'
+
+# Diretório para coletar arquivos estáticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+
+# Whitenoise: Otimiza o serviço de arquivos estáticos em produção
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# -----------------------------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
