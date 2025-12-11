@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+from dj_database_url import parse as dburl
 
 # --------------------
 # BASE DIR
@@ -14,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --------------------
 SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # Heroku aceita wildcard
 
@@ -29,12 +30,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # third-party
+    'category',
+    'order',
     'rest_framework',
-
-    # local apps
-    'api',
+    'api'
 ]
 
 
@@ -83,10 +82,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # --------------------
 # DATABASE (Heroku)
 # --------------------
+default_dburl = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
 }
 
 

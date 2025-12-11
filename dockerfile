@@ -1,28 +1,36 @@
-# 1. Usar imagem Python (Estável)
-FROM python:3.11-slim
+# 1. Base Stage: Configura o ambiente Python
+FROM python:3.12.1-slim
 
-# 2. Configurar diretório de trabalho inicial e variável de ambiente
-WORKDIR /app
-ENV PYTHONUNBUFFERED 1 # Garante que o output seja enviado para o log do Docker imediatamente
+# Variáveis de ambiente
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100
 
-# 3. Instalar dependências
-COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt \
-    # Instalar dependências de banco de dados (se for usar o psycopg2)
-    && apt-get update && apt-get install -y --no-install-recommends gcc libpq-dev \
+# Instalação de dependências do sistema
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+        curl \
+        build-essential \
+        libpq-dev gcc \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 4. Copiar todo o conteúdo do projeto
-# O 'manage.py' e a pasta 'config' estarão diretamente em /app/
-COPY . /app/
+# Diretório da app
+WORKDIR /app
 
-# 5. Configurar o WORKDIR final
-# Esta linha é redundante, pois o WORKDIR /app já foi definido, mas é inofensiva.
-# WORKDIR /app 
+# Copia requirements.txt
+COPY requirements.txt .
 
-# 6. Expôr a porta
+# Instala dependências
+RUN pip install -r requirements.txt
+
+# Copia todo o projeto
+COPY . .
+
+# Expõe a porta do Django
 EXPOSE 8000
 
-# 7. Comando Final: Usar apenas a última linha CMD, executando o Gunicorn
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Comando padrão
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

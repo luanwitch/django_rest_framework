@@ -1,0 +1,24 @@
+# Ignora o ambiente virtual local (VENV/POETRY)
+.venv
+venv
+__pycache__
+
+# Ignora dependências de desenvolvimento e cache
+*.pyc
+*.pyo
+.pytest_cache
+
+# Arquivos de Log e Banco de Dados Local
+*.log
+db.sqlite3
+.env
+/media/
+/static_root/
+
+# Ignora o repositório Git (Não precisamos dele na imagem final)
+.git
+.gitignore
+
+# Ignora os arquivos de desenvolvimento específicos que não são necessários
+# se você não estiver usando requirements.txt:
+# requirements.txt

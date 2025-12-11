@@ -1,0 +1,28 @@
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Ambientes Python e Virtual
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambientes Poetry
+.venv/
+.mypy_cache/
+.pytest_cache/
+
+# Arquivos de Log e Dados
+*.log
+db.sqlite3 # Arquivo de banco de dados local
+media/
+static_root/ # Local onde o collectstatic armazena os arquivos
+
+# Variáveis de Ambiente e Chaves Secretas
+.env
+secret_key.txt
+
+# Arquivos de Editor
+.vscode/
+.idea/
