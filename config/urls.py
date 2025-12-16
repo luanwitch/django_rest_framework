@@ -1,6 +1,6 @@
-from django.contrib import admin
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.contrib import admin # type: ignore
+from django.urls import path, include # type: ignore
+from rest_framework.routers import DefaultRouter # type: ignore
 
 from api.views import ProductViewSet
 from category.views import CategoryViewSet
@@ -12,6 +12,7 @@ router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'orders', OrderViewSet, basename='order')
 
 urlpatterns = [
+    path('', lambda req: redirect('/api/')), # Redireciona a home para a API # type: ignore
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
+    path('api/', include('api.urls')),
 ]
