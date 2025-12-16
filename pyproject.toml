@@ -1,0 +1,22 @@
+[project]
+name = "django-rest-framework"
+version = "0.1.0"
+description = "Modulo 19 - EBAC"
+authors = [
+    { name = "Luan Luís", email = "luanvwittchind@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+
+dependencies = [
+    "django>=5.1,<6.0",
+    "djangorestframework>=3.15.0",
+    "psycopg2-binary>=2.9.9",
+    "python-decouple>=3.8",
+    "dj-database-url>=2.2.0",
+    "whitenoise>=6.5.0"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
