@@ -1,36 +1,28 @@
-# 1. Base Stage: Configura o ambiente Python
-FROM python:3.12.1-slim
+FROM python:3.11-slim
 
-# Variáveis de ambiente
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Instalação de dependências do sistema
+WORKDIR /app
+
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
-        curl \
-        build-essential \
-        libpq-dev gcc \
+    && apt-get install -y --no-install-recommends \
+       build-essential \
+       libpq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Diretório da app
-WORKDIR /app
+RUN pip install --no-cache-dir poetry
+RUN poetry config virtualenvs.create false
 
-# Copia requirements.txt
-COPY requirements.txt .
+COPY pyproject.toml poetry.lock /app/
 
-# Instala dependências
-RUN pip install -r requirements.txt
+RUN poetry install --no-interaction --no-ansi --no-root
 
-# Copia todo o projeto
-COPY . .
+COPY . /app/
 
-# Expõe a porta do Django
+RUN python manage.py collectstatic --noinput || true
+
 EXPOSE 8000
 
-# Comando padrão
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
