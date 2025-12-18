@@ -1,9 +1,4 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from .models import Order
-from .serializers import OrderSerializer
+from django.http import JsonResponse
 
-class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-    # Opcional: Permissões para que apenas o proprietário da ordem possa vê-la
+def index(request):
+    return JsonResponse({"message": "Orders OK"})

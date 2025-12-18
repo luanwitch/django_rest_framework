@@ -1,4 +1,4 @@
 from django.http import JsonResponse
 
 def index(request):
-    return JsonResponse({"message": "Category OK"})
+    return JsonResponse({"message": "Product OK"})

@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from decouple import config
-import dj_database_url
+from decouple import config # type: ignore
+import dj_database_url # type: ignore
 
 # BASE DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,11 +19,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Third-party
-    "rest_framework",
-
-    # Local apps
+    'product',
+    'rest_framework',
     "category",
     "order",
     "api",
