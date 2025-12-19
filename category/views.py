@@ -1,4 +1,7 @@
-from django.http import JsonResponse
+from rest_framework import viewsets
+from .models import Category
+from .serializers import CategorySerializer
 
-def index(request):
-    return JsonResponse({"message": "Category OK"})
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer

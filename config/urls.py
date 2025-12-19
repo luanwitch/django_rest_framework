@@ -1,9 +1,15 @@
-from django.contrib import admin
-from django.urls import path, include
+# config/urls.py
+from rest_framework.routers import DefaultRouter
+from category.views import CategoryViewSet
+from product.views import ProductViewSet
+# from order.views import OrderViewSet 
+
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
+router.register(r'products', ProductViewSet)
+# router.register(r'orders', OrderViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    path('api/products/', include('product.urls')),
-    path('api/orders/', include('order.urls')),
+    path('api/', include(router.urls)), 
 ]

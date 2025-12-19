@@ -1,4 +1,7 @@
-from django.http import JsonResponse
+from rest_framework import viewsets
+from .models import Order
+from .serializers import OrderSerializer
 
-def index(request):
-    return JsonResponse({"message": "Orders OK"})
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
