@@ -1,4 +1,7 @@
-from django.http import JsonResponse
+from rest_framework import viewsets
+from .models import Product
+from .serializers import ProductSerializer
 
-def index(request):
-    return JsonResponse({"message": "Product OK"})
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer

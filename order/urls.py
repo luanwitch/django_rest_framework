@@ -1,6 +1,6 @@
-from django.urls import path
-from . import views
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-    path('', views.index, name='order-index'),
-]
+from product.views import ProductViewSet
+from order.views import OrderViewSet

@@ -13,18 +13,21 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [h.strip() f
 
 # APPLICATIONS
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    'product',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
     'rest_framework',
-    "category",
-    "order",
-    "api",
+
+    'api.apps.ApiConfig',
+    'product.apps.ProductConfig',
+    'category.apps.CategoryConfig',
+    'order.apps.OrderConfig',
 ]
+
 
 # MIDDLEWARE
 MIDDLEWARE = [
