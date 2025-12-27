@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import CategoryListCreateView  # Verifique se o nome está idêntico
 
 urlpatterns = [
-    path('', views.index, name='category-index'),
+    path('categories/', CategoryListCreateView.as_view(), name='category-list-create'),
 ]

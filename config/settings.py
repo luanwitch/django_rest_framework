@@ -1,3 +1,8 @@
+print("DEBUG: Carregando settings.py com sucesso!")
+import sys
+print(f"DEBUG: Python Path: {sys.path}")
+
+
 import os
 from pathlib import Path
 from decouple import config # type: ignore
@@ -9,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = config("SECRET_KEY", default="unsafe-secret-key")
 DEBUG = config("DEBUG", default=True, cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=lambda v: [h.strip() for h in v.split(",")])
+ALLOWED_HOSTS = ['luanvieira9.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 # APPLICATIONS
 INSTALLED_APPS = [
@@ -19,15 +24,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    # Bibliotecas de terceiros
     'rest_framework',
-
-    'api.apps.ApiConfig',
-    'product.apps.ProductConfig',
-    'category.apps.CategoryConfig',
-    'order.apps.OrderConfig',
+    
+    # Suas aplicações
+    'product',
+    'category',
+    'order',
+    'api',
 ]
-
 
 # MIDDLEWARE
 MIDDLEWARE = [
@@ -93,7 +99,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# config/settings.py
+
 REST_FRAMEWORK = {
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
 }
